@@ -1,0 +1,73 @@
+{
+  "name": "cv-decorators",
+  "version": "0.0.1",
+  "description": "List of ES6 decorators",
+  "main": "lib/",
+  "scripts": {
+    "clean:lib": "rm -rf ./lib/*",
+    "predist": "npm run clean:lib -s",
+    "dist": "npm run dist:scripts",
+    "dist:scripts": "babel src --out-dir lib",
+    "dev": "npm run dev:open && npm run dev:serve",
+    "dev:serve": "webpack-dev-server --devtool eval --progress --colors --content-base docs/",
+    "dev:open": "opener http://localhost:8080",
+    "test": "npm run test:node && npm run test:browser",
+    "test:browser": "karma start --single-run",
+    "test:browser:watch": "karma start",
+    "test:node": "mocha --compilers js:babel/register --recursive",
+    "test:node:watch": "npm run test:node -- -w",
+    "lint": "npm run lint:eslint",
+    "lint:eslint": "eslint --ext=\".js\" src/",
+    "predoc": "webpack --config webpack.doc.config.js",
+    "doc": "npm run doc:build",
+    "doc:build": "gh-pages -d docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/carlosvillu/cv-decorators.git"
+  },
+  "keywords": [
+    "es6",
+    "list",
+    "decorators"
+  ],
+  "pre-commit": [
+    "lint"
+  ],
+  "author": "Carlos Villuendas <carlosvillu@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/carlosvillu/cv-decorators/issues"
+  },
+  "homepage": "https://github.com/carlosvillu/cv-decorators#readme",
+  "devDependencies": {
+    "@schibstedspain/frontend-pre-commit-rules": "latest",
+    "babel": "5.8.23",
+    "babel-eslint": "4.1.3",
+    "babel-loader": "^5.1.4",
+    "chai": "2.3.0",
+    "chai-as-promised": "5.1.0",
+    "css-loader": "0.14.5",
+    "esdoc": "0.1.3",
+    "eslint": "0.24.1",
+    "eslint-plugin-react": "2.7.0",
+    "gh-pages": "0.3.1",
+    "karma": "0.13.15",
+    "karma-browserify": "4.1.2",
+    "karma-chrome-launcher": "0.1.8",
+    "karma-cli": "0.0.4",
+    "karma-mocha": "0.1.10",
+    "karma-phantomjs-launcher": "0.1.4",
+    "karma-spec-reporter": "0.0.19",
+    "karma-webpack": "^1.7.0",
+    "mocha": "2.2.4",
+    "opener": "1.4.1",
+    "react-hot-loader": "1.2.7",
+    "sinon": "1.15.4",
+    "webpack": "^1.9.11",
+    "webpack-dev-server": "^1.9.0"
+  },
+  "dependencies": {
+    "rx-lite": "^4.0.7"
+  }
+}
