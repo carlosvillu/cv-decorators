@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/carlosvillu/cv-decorators.svg)](https://travis-ci.org/carlosvillu/cv-decorators)
+
 # cv-decorators
 List of ES6 decorators
 
