@@ -5,7 +5,7 @@ List of ES6 decorators
 
 ## Streamify
 
-Permite crear un stream de llamadas a cualquier método de una clase. *Dependencia de RxJS*
+Creates a stream of calls to any method of a class. *Dependencia de RxJS*
 
 ```javascript
 import {streamify} from 'cv-decorators';
