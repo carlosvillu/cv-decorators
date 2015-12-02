@@ -17,7 +17,7 @@ class Person {
     }
 
     greettingAsync(name){
-        return new Promise( resolve => setTimeout(resolve.bind(resolve, `Hi ${name}`), 100) );
+        return new Promise( resolve => setTimeout(resolve, 100, `Hi ${name}`) );
     }
 }
 
