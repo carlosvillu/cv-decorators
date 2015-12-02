@@ -5,7 +5,7 @@ List of ES6 decorators
 
 ## Streamify
 
-Creates a stream of calls to any method of a class. *Dependencia de RxJS*
+Creates a stream of calls to any method of a class. *Dependency of RxJS*
 
 ```javascript
 import {streamify} from 'cv-decorators';
@@ -17,7 +17,7 @@ class Person {
     }
 
     greettingAsync(name){
-        return new Promise( resolve => setTimeout(resolve(`Hi ${name}`), 100) );
+        return new Promise( resolve => setTimeout(resolve.bind(resolve, `Hi ${name}`), 100) );
     }
 }
 
