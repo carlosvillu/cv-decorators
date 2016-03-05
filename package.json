@@ -9,6 +9,7 @@
     "fenix": "rm -Rf node_modules && npm install",
     "lint": "standard",
     "test": "NODE_ENV=test karma start --single-run",
+    "test:ci": "NODE_ENV=test ./node_modules/.bin/karma start --single-run --browsers Firefox",
     "test:watch": "NODE_ENV=test karma start --log-level disable"
   },
   "repository": {
