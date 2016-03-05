@@ -10,7 +10,8 @@
     "lint": "standard",
     "test": "NODE_ENV=test karma start --single-run",
     "test:ci": "NODE_ENV=test ./node_modules/.bin/karma start --single-run --browsers Firefox",
-    "test:watch": "NODE_ENV=test karma start --log-level disable"
+    "test:watch": "NODE_ENV=test karma start --log-level disable",
+    "up": "updtr"
   },
   "repository": {
     "type": "git",
@@ -59,6 +60,7 @@
     "npm-run-all": "1.5.1",
     "sinon": "1.17.3",
     "standard": "6.0.7",
+    "updtr": "0.1.7",
     "validate-commit-msg": "2.2.0",
     "watchify": "3.7.0"
   },
@@ -93,6 +95,6 @@
     ]
   },
   "dependencies": {
-    "rx-lite": "4.0.7"
+    "rx-lite": "4.0.8"
   }
 }
