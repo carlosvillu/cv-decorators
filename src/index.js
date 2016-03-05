@@ -1,6 +1,5 @@
-import 'babel/polyfill';
-import streamify from './decorators/streamify';
+import streamify from './decorators/streamify'
 
-export default {
+export {
   streamify
-};
+}

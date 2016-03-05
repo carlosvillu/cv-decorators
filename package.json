@@ -4,21 +4,12 @@
   "description": "List of ES6 decorators",
   "main": "lib/",
   "scripts": {
-    "clean:lib": "rm -rf ./lib/*",
-    "predist": "npm run clean:lib -s",
-    "dist": "npm run dist:scripts",
-    "dist:scripts": "babel src --out-dir lib",
-    "dev": "npm run dev:open && npm run dev:serve",
-    "dev:serve": "webpack-dev-server --devtool eval --progress --colors --content-base docs/",
-    "dev:open": "opener http://localhost:8080",
-    "test": "npm run test:node",
-    "test:node": "mocha --compilers js:babel/register --recursive",
-    "test:node:watch": "npm run test:node -- -w",
-    "lint": "npm run lint:eslint",
-    "lint:eslint": "eslint --ext=\".js\" src/",
-    "predoc": "webpack --config webpack.doc.config.js",
-    "doc": "npm run doc:build",
-    "doc:build": "gh-pages -d docs"
+    "co": "git-cz",
+    "coverage": "NODE_ENV=test karma start --single-run",
+    "fenix": "rm -Rf node_modules && npm install",
+    "lint": "standard",
+    "test": "NODE_ENV=test karma start --single-run",
+    "test:watch": "NODE_ENV=test karma start --log-level disable"
   },
   "repository": {
     "type": "git",
@@ -40,25 +31,66 @@
   },
   "homepage": "https://github.com/carlosvillu/cv-decorators#readme",
   "devDependencies": {
-    "@schibstedspain/frontend-pre-commit-rules": "latest",
-    "babel": "5.8.23",
-    "babel-eslint": "4.1.3",
-    "babel-loader": "^5.1.4",
-    "chai": "2.3.0",
-    "chai-as-promised": "5.1.0",
-    "css-loader": "0.14.5",
-    "esdoc": "0.1.3",
-    "eslint": "0.24.1",
-    "eslint-plugin-react": "2.7.0",
-    "gh-pages": "0.3.1",
-    "mocha": "2.2.4",
-    "opener": "1.4.1",
-    "react-hot-loader": "1.2.7",
-    "sinon": "1.15.4",
-    "webpack": "^1.9.11",
-    "webpack-dev-server": "^1.9.0"
+    "babel": "6.5.2",
+    "babel-eslint": "5.0.0",
+    "babel-plugin-transform-runtime": "6.6.0",
+    "babel-polyfill": "6.6.1",
+    "babel-preset-es2015": "6.6.0",
+    "babel-preset-stage-3": "6.5.0",
+    "babelify": "7.2.0",
+    "browserify": "13.0.0",
+    "browserify-babel-istanbul": "0.4.0",
+    "chai": "3.5.0",
+    "commitizen": "2.6.1",
+    "cz-conventional-changelog": "1.1.5",
+    "envify": "3.4.0",
+    "estraverse-fb": "1.3.1",
+    "ghooks": "1.0.3",
+    "karma": "0.13.21",
+    "karma-browserify": "5.0.2",
+    "karma-chrome-launcher": "0.2.2",
+    "karma-clear-screen-reporter": "1.0.0",
+    "karma-coverage": "0.5.4",
+    "karma-mocha": "0.2.2",
+    "karma-spec-reporter": "0.0.24",
+    "mocha": "2.4.5",
+    "npm-run-all": "1.5.1",
+    "sinon": "1.17.3",
+    "standard": "6.0.7",
+    "validate-commit-msg": "2.2.0",
+    "watchify": "3.7.0"
+  },
+  "config": {
+    "ghooks": {
+      "pre-commit": "npm-run-all lint test",
+      "commit-msg": "validate-commit-msg"
+    },
+    "commitizen": {
+      "path": "node_modules/cz-conventional-changelog"
+    }
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": [
+      "it",
+      "describe",
+      "beforeEach",
+      "afterEach"
+    ],
+    "ignore": [
+      "docs/"
+    ]
+  },
+  "babel": {
+    "presets": [
+      "es2015",
+      "stage-3"
+    ],
+    "plugins": [
+      "transform-runtime"
+    ]
   },
   "dependencies": {
-    "rx-lite": "^4.0.7"
+    "rx-lite": "4.0.7"
   }
 }

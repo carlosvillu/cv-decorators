@@ -1,111 +1,108 @@
-import {expect} from 'chai';
+import {expect} from 'chai'
 
-import {streamify} from '../src';
+import {streamify} from '../src'
 
 class Dummy {
-  constructor(name){
-    this._name = name;
+  constructor (name) {
+    this._name = name
   }
 
-  get name(){return this._name}
+  get name () { return this._name }
 
-  throwError(){
-    throw new Error('throwError');
+  throwError () {
+    throw new Error('throwError')
   }
 
-  asyncThrowError(){
+  asyncThrowError () {
     return new Promise((resolve, reject) => {
-      setTimeout(() => reject('asyncThrowError'), 0);
-    });
+      setTimeout(() => reject('asyncThrowError'), 0)
+    })
   }
 
-  notDecorateMethod(number){
-    return `Called with ${number}`;
+  notDecorateMethod (number) {
+    return `Called with ${number}`
   }
 
-  dummyMethodPromise(number, multiplicity){
-    return new Promise(resolve => {
-      setTimeout(() => resolve(number * multiplicity), 0);
-    });
+  dummyMethodPromise (number, multiplicity) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(number * multiplicity), 0)
+    })
   }
 
-  dummyMethod(number, multiplicity){
-    return number * multiplicity;
+  dummyMethod (number, multiplicity) {
+    return number * multiplicity
   }
 }
 
-const noop = () => {};
-
 describe('Streamify', () => {
   it('Is a function (decorator)', () => {
-    expect(streamify).to.be.a('function');
-  });
+    expect(streamify).to.be.a('function')
+  })
 
   describe('Should decorate a class', () => {
-    let dummyDecorate;
+    let dummyDecorate
 
-    beforeEach( () => {
-      const DummyDecorate = streamify('dummyMethod', 'dummyMethodPromise', 'throwError', 'asyncThrowError')(Dummy);
-      dummyDecorate = new DummyDecorate('Carlos');
-    });
+    beforeEach(() => {
+      const DummyDecorate = streamify('dummyMethod', 'dummyMethodPromise', 'throwError', 'asyncThrowError')(Dummy)
+      dummyDecorate = new DummyDecorate('Carlos')
+    })
 
-    afterEach( () => {
-      dummyDecorate = null;
-    } );
+    afterEach(() => {
+      dummyDecorate = null
+    })
 
     it('subscribe to calls and results for sync method', (done) => {
       dummyDecorate.$.dummyMethod.subscribe(({params, result}) => {
-        expect(params).to.be.eql([5, 2]);
+        expect(params).to.be.eql([5, 2])
         expect(result).to.be.eql(10)
-        done();
-      });
+        done()
+      })
 
-      dummyDecorate.dummyMethod(5, 2);
-    });
+      dummyDecorate.dummyMethod(5, 2)
+    })
 
     it('Remaing not decorate methods', () => {
-      expect(dummyDecorate.notDecorateMethod(42)).to.be.eql('Called with 42');
-    });
+      expect(dummyDecorate.notDecorateMethod(42)).to.be.eql('Called with 42')
+    })
 
     it('Notify sync errors', (done) => {
       dummyDecorate.$.throwError.subscribe(
         console.log.bind(console),
         ({params, error}) => {
-          expect(params).to.be.eql([]);
-          expect(error.message).to.be.eql('throwError');
-          done();
+          expect(params).to.be.eql([])
+          expect(error.message).to.be.eql('throwError')
+          done()
         },
         console.log.bind(console)
-      );
+      )
 
-      try{
-        dummyDecorate.throwError();
-      }catch(e){}
-    });
+      try {
+        dummyDecorate.throwError()
+      } catch (e) {}
+    })
 
-    it('Notify Async errors', () => {
+    it('Notify Async errors', (done) => {
       dummyDecorate.$.asyncThrowError.subscribe(
         console.log.bind(console),
         ({params, error}) => {
-          expect(params).to.be.eql([]);
-          expect(error.message).to.be.eql('throwError');
-          done();
+          expect(params).to.be.eql([])
+          expect(error).to.be.eql('asyncThrowError')
+          done()
         },
         console.log.bind(console)
-      );
+      )
 
-      dummyDecorate.asyncThrowError();
-    });
+      dummyDecorate.asyncThrowError()
+    })
 
     it('subscribe to calls and results for Async method', (done) => {
       dummyDecorate.$.dummyMethodPromise.subscribe(({params, result}) => {
-        expect(params).to.be.eql([10, 2]);
+        expect(params).to.be.eql([10, 2])
         expect(result).to.be.eql(20)
-        done();
-      });
+        done()
+      })
 
-      dummyDecorate.dummyMethodPromise(10, 2);
-    });
-
-  });
-});
+      dummyDecorate.dummyMethodPromise(10, 2)
+    })
+  })
+})
