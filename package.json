@@ -22,10 +22,6 @@
     "list",
     "decorators"
   ],
-  "pre-commit": [
-    "lint",
-    "test"
-  ],
   "author": "Carlos Villuendas <carlosvillu@gmail.com>",
   "license": "MIT",
   "bugs": {
