@@ -56,7 +56,7 @@
     "npm-run-all": "1.6.0",
     "sinon": "1.17.3",
     "standard": "6.0.8",
-    "updtr": "0.1.8",
+    "updtr": "0.1.9",
     "validate-commit-msg": "2.4.0",
     "watchify": "3.7.0"
   },
