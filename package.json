@@ -57,7 +57,7 @@
     "sinon": "1.17.3",
     "standard": "6.0.8",
     "updtr": "0.1.10",
-    "validate-commit-msg": "2.4.0",
+    "validate-commit-msg": "2.4.1",
     "watchify": "3.7.0"
   },
   "config": {
