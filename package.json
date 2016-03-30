@@ -39,7 +39,7 @@
     "browserify": "13.0.0",
     "browserify-babel-istanbul": "0.4.0",
     "chai": "3.5.0",
-    "commitizen": "2.7.3",
+    "commitizen": "2.7.4",
     "cz-conventional-changelog": "1.1.5",
     "envify": "3.4.0",
     "ghooks": "1.1.1",
