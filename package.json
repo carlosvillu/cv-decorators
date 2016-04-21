@@ -40,7 +40,7 @@
     "browserify-babel-istanbul": "0.4.0",
     "chai": "3.5.0",
     "commitizen": "2.8.0",
-    "cz-conventional-changelog": "1.1.5",
+    "cz-conventional-changelog": "1.1.6",
     "envify": "3.4.0",
     "ghooks": "1.2.0",
     "karma": "0.13.22",
