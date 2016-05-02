@@ -1,6 +1,6 @@
 {
-  "name": "cv-decorators",
-  "version": "0.0.1",
+  "name": "@schibstedspain/cv-decorators",
+  "version": "0.1.1",
   "description": "List of ES6 decorators",
   "main": "lib/",
   "scripts": {
@@ -8,11 +8,16 @@
     "coverage": "NODE_ENV=test karma start --single-run",
     "fenix": "rm -Rf node_modules && npm install",
     "lint": "standard",
+    "prepublish": "rimraf ./lib && npm run dist",
+    "dist": "babel src --out-dir lib",
     "test": "NODE_ENV=test karma start --single-run",
     "test:ci": "NODE_ENV=test ./node_modules/.bin/karma start --single-run --browsers Firefox",
     "test:watch": "NODE_ENV=test karma start --log-level disable",
     "up": "updtr"
   },
+  "files": [
+    "lib"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/carlosvillu/cv-decorators.git"
@@ -29,7 +34,7 @@
   },
   "homepage": "https://github.com/carlosvillu/cv-decorators#readme",
   "devDependencies": {
-    "babel": "6.5.2",
+    "babel-cli": "6.7.7",
     "babel-eslint": "6.0.3",
     "babel-plugin-transform-runtime": "6.7.5",
     "babel-polyfill": "6.7.4",
