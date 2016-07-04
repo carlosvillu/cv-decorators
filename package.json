@@ -42,7 +42,7 @@
     "commitizen": "2.8.1",
     "cz-conventional-changelog": "1.1.6",
     "envify": "3.4.0",
-    "ghooks": "1.2.1",
+    "ghooks": "1.3.1",
     "karma": "0.13.22",
     "karma-browserify": "5.0.5",
     "karma-chrome-launcher": "1.0.1",
