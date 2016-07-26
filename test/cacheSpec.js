@@ -23,27 +23,22 @@ describe('Cache', () => {
         })
     })
 
-    xit('return differents numbers if the promise fail', (done) => {
-      let fail = false // Un poco cogido por los pelos
+    it('return differents numbers if the promise fail', (done) => {
+      let fail = true // Un poco cogido por los pelos
       class Dummy {
         @cache()
         asyncRndNumber (num) {
-          return new Promise(
-            (resolve, reject) => !fail ? setTimeout(resolve, 100, Math.random()) : Promise.reject()
-          )
+          const prms = !fail ? new Promise((resolve, reject) => setTimeout(resolve, 100, Math.random()))
+                             : new Promise((resolve, reject) => setTimeout(reject, 100, Math.random()))
+          fail = !fail
+          return prms
         }
       }
       const dummy = new Dummy()
-      // Esto no funciona!!!!
-      dummy.asyncRndNumber().then(firstCall => {
-        console.log(firstCall)
-        fail = true
-        dummy.asyncRndNumber().then(n => console.log(n)).catch(() => {
-          fail = false
-          dummy.asyncRndNumber().then(secondCall => {
-            expect(firstCall).to.be.not.eql(secondCall)
-            done()
-          })
+      dummy.asyncRndNumber(12).catch(firstCall => {
+        dummy.asyncRndNumber(12).then((secondCall) => {
+          expect(firstCall).to.be.not.eql(secondCall)
+          done()
         })
       })
     })
