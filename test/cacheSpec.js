@@ -4,7 +4,7 @@ import {expect} from 'chai'
 
 import cache from '../src/decorators/cache'
 
-describe.only('Cache', () => {
+describe('Cache', () => {
   it('Should exist', () => {
     expect(cache).to.be.a('function')
   })
