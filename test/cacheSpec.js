@@ -9,6 +9,46 @@ describe('Cache', () => {
     expect(cache).to.be.a('function')
   })
 
+  describe('should decorate an async method', () => {
+    it('return twice times the same random numbre without params', (done) => {
+      class Dummy {
+        @cache()
+        asyncRndNumber (num) { return new Promise(resolve => setTimeout(resolve, 100, Math.random())) }
+      }
+      const dummy = new Dummy()
+      Promise.all([dummy.asyncRndNumber(), dummy.asyncRndNumber()])
+        .then(([firstCall, secondCall]) => {
+          expect(firstCall).to.be.eql(secondCall)
+          done()
+        })
+    })
+
+    xit('return differents numbers if the promise fail', (done) => {
+      let fail = false // Un poco cogido por los pelos
+      class Dummy {
+        @cache()
+        asyncRndNumber (num) {
+          return new Promise(
+            (resolve, reject) => !fail ? setTimeout(resolve, 100, Math.random()) : Promise.reject()
+          )
+        }
+      }
+      const dummy = new Dummy()
+      // Esto no funciona!!!!
+      dummy.asyncRndNumber().then(firstCall => {
+        console.log(firstCall)
+        fail = true
+        dummy.asyncRndNumber().then(n => console.log(n)).catch(() => {
+          fail = false
+          dummy.asyncRndNumber().then(secondCall => {
+            expect(firstCall).to.be.not.eql(secondCall)
+            done()
+          })
+        })
+      })
+    })
+  })
+
   describe('should decorate a sync method', () => {
     it('return twice time the same random number without params', () => {
       class Dummy {

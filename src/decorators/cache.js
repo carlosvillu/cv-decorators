@@ -10,6 +10,11 @@ const _cache = ({ttl, Target, name, original} = {}) => {
       __CACHE__[key] = {createdAt: now, returns: original.apply(original, args)}
     }
 
+    // http://stackoverflow.com/questions/27746304/how-do-i-tell-if-an-object-is-a-promise/38339199#38339199
+    if (Promise.resolve(__CACHE__[key].returns) === __CACHE__[key].returns) {
+      __CACHE__[key].returns.catch(() => delete __CACHE__[key])
+    }
+
     if ((now - __CACHE__[key].createdAt) > ttl) {
       delete __CACHE__[key]
     }
