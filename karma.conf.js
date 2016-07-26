@@ -26,7 +26,10 @@ var config = {
     transform: [
       ['babelify', {
         presets: ['es2015', 'stage-3'],
-        plugins: ['transform-runtime']
+        plugins: [
+          'transform-runtime',
+          'transform-decorators-legacy'
+        ]
       }],
       'envify'
     ]
