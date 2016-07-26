@@ -1,9 +1,10 @@
 import isNode from '../helpers/isNode'
+import md5 from '../helpers/md5'
 
 const __CACHE__ = {}
-const _cache = ({ttl, original} = {}) => {
+const _cache = ({ttl, Target, name, original} = {}) => {
   return (...args) => {
-    const key = JSON.stringify(args)
+    const key = `${Target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
     const now = +new Date()
     if (__CACHE__[key] === undefined) {
       __CACHE__[key] = {createdAt: now, returns: original.apply(original, args)}
@@ -25,6 +26,6 @@ const _cache = ({ttl, original} = {}) => {
 export default ({ttl = 500} = {}) => {
   return (Target, name, descriptor) => {
     return isNode ? descriptor
-                  : Object.assign({}, descriptor, {value: _cache({ttl, original: descriptor.value})})
+                  : Object.assign({}, descriptor, {value: _cache({ttl, Target, name, original: descriptor.value})})
   }
 }
