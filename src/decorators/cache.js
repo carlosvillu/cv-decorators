@@ -12,6 +12,11 @@ const _cache = ({ttl, original} = {}) => {
     if ((now - __CACHE__[key].createdAt) > ttl) {
       delete __CACHE__[key]
     }
+
+    // Dump cache to console if setting to truthy '__dumpCache__' key in localStorage
+    window.localStorage.__dumpCache__ && !!JSON.parse(window.localStorage.__dumpCache__) &&
+    (console.clear() || console.log(__CACHE__))
+
     return __CACHE__[key] !== undefined ? __CACHE__[key].returns
                                         : original.apply(original, args)
   }
