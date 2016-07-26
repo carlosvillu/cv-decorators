@@ -1,4 +1,5 @@
 /* eslint-disable */
+// https://github.com/satazor/js-spark-md5/blob/master/spark-md5.js
 
 (function (factory) {
     if (typeof exports === 'object') {
