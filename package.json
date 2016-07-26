@@ -53,7 +53,7 @@
     "karma-spec-reporter": "0.0.26",
     "mocha": "2.4.5",
     "npm-run-all": "2.1.0",
-    "sinon": "1.17.4",
+    "sinon": "1.17.5",
     "standard": "7.1.0",
     "updtr": "0.1.15",
     "validate-commit-msg": "2.6.1",
