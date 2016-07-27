@@ -9,6 +9,34 @@ describe('Cache', () => {
     expect(cache).to.be.a('function')
   })
 
+  describe('should be able decorate severals class with diferents TTLS', () => {
+    let clock = null
+    beforeEach(() => clock = sinon.useFakeTimers())
+    afterEach(() => clock.restore())
+
+    it('return same value for long TTL and diferent for shor TTL', () => {
+      class Foo {
+        @cache()
+        syncRndNumber (num) { return Math.random() }
+      }
+
+      class Bar {
+        @cache({ttl: 700})
+        syncRndNumber (num) { return Math.random() }
+      }
+      const foo = new Foo()
+      const bar = new Bar()
+      const firstFooCall = foo.syncRndNumber()
+      const firstBarCall = bar.syncRndNumber()
+      clock.tick(600)
+      const secondFooCall = foo.syncRndNumber()
+      const secondBarCall = bar.syncRndNumber()
+
+      expect(firstFooCall).to.be.not.eql(secondFooCall)
+      expect(firstBarCall).to.be.eql(secondBarCall)
+    })
+  })
+
   describe('should decorate an async method', () => {
     it('return twice times the same random numbre without params', (done) => {
       class Dummy {
