@@ -1,0 +1,9 @@
+approve_by_comment: true
+approve_regex: '^:\+1:'
+reject_regex: ^NO
+reset_on_push: false
+reviewers:
+  members:
+  - carlosvillu
+  name: pullapprove
+  required: 1
