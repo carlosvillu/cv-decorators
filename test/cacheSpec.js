@@ -9,12 +9,12 @@ describe('Cache', () => {
     expect(cache).to.be.a('function')
   })
 
-  describe('should be able decorate severals class with diferents TTLS', () => {
+  describe('should be able to decorate several classes with different TTLs', () => {
     let clock = null
     beforeEach(() => clock = sinon.useFakeTimers())
     afterEach(() => clock.restore())
 
-    it('return same value for long TTL and diferent for shor TTL', () => {
+    it('return same value for long TTL and different for short TTL', () => {
       class Foo {
         @cache()
         syncRndNumber (num) { return Math.random() }
@@ -38,7 +38,7 @@ describe('Cache', () => {
   })
 
   describe('should decorate an async method', () => {
-    it('return twice times the same random numbre without params', (done) => {
+    it('return twice the same random number without params', (done) => {
       class Dummy {
         @cache()
         asyncRndNumber (num) { return new Promise(resolve => setTimeout(resolve, 100, Math.random())) }
@@ -51,7 +51,7 @@ describe('Cache', () => {
         })
     })
 
-    it('return differents numbers if the promise fail', (done) => {
+    it('return different numbers if the promise fails', (done) => {
       let fail = true // Un poco cogido por los pelos
       class Dummy {
         @cache()
@@ -82,7 +82,7 @@ describe('Cache', () => {
       expect(dummy.syncRndNumber()).to.be.eql(dummy.syncRndNumber())
     })
 
-    it('return differents numbers with diferrents params', () => {
+    it('return different numbers with different params', () => {
       class Dummy {
         @cache()
         syncRndNumber (num) { return Math.random() }
@@ -115,7 +115,7 @@ describe('Cache', () => {
         clock.tick(600)
         expect(dummy.syncRndNumber(123)).to.be.not.eql(firstCall)
       })
-      it('remaing the cache before ttl ms', () => {
+      it('remain the cache before ttl ms', () => {
         class Dummy {
           @cache() // 500ms by default
           syncRndNumber (num) { return Math.random() }
@@ -125,7 +125,7 @@ describe('Cache', () => {
         clock.tick(400)
         expect(dummy.syncRndNumber(1234)).to.be.eql(firstCall)
       })
-      it('remaing the cache before not default ttl ms', () => {
+      it('remain the cache before not default ttl ms', () => {
         class Dummy {
           @cache({ttl: 700})
           syncRndNumber (num) { return Math.random() }
