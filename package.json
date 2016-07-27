@@ -1,6 +1,6 @@
 {
   "name": "@schibstedspain/cv-decorators",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "List of ES6 decorators",
   "main": "lib/",
   "scripts": {
