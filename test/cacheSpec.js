@@ -9,6 +9,21 @@ describe('Cache', () => {
     expect(cache).to.be.a('function')
   })
 
+  describe('should be able use others method in this instance', () => {
+    it('return the response of other instance´s method', () => {
+      class Buz {
+        constructor () {
+          this.rnd = () => Math.random()
+        }
+
+        @cache()
+        syncRndNumber (num) { return this.rnd() }
+      }
+      const buz = new Buz()
+      expect(buz.syncRndNumber()).to.be.eql(buz.syncRndNumber())
+    })
+  })
+
   describe('should be able to decorate several classes with different TTLs', () => {
     let clock = null
     beforeEach(() => clock = sinon.useFakeTimers())
