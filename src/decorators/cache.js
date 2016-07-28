@@ -2,12 +2,12 @@ import isNode from '../helpers/isNode'
 import md5 from '../helpers/md5'
 
 const __CACHE__ = {}
-const _cache = ({ttl, Target, name, original} = {}) => {
+const _cache = ({ttl, target, name, instance, original} = {}) => {
   return (...args) => {
-    const key = `${Target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
+    const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
     const now = +new Date()
     if (__CACHE__[key] === undefined) {
-      __CACHE__[key] = {createdAt: now, returns: original.apply(original, args)}
+      __CACHE__[key] = {createdAt: now, returns: original.apply(instance, args)}
     }
 
     // http://stackoverflow.com/questions/27746304/how-do-i-tell-if-an-object-is-a-promise/38339199#38339199
@@ -24,13 +24,42 @@ const _cache = ({ttl, Target, name, original} = {}) => {
     (console.clear() || console.log(__CACHE__))
 
     return __CACHE__[key] !== undefined ? __CACHE__[key].returns
-                                        : original.apply(original, args)
+                                        : original.apply(instance, args)
   }
 }
 
 export default ({ttl = 500} = {}) => {
-  return (Target, name, descriptor) => {
-    return isNode ? descriptor
-                  : Object.assign({}, descriptor, {value: _cache({ttl, Target, name, original: descriptor.value})})
+  return (target, name, descriptor) => {
+    const { value: fn, configurable, enumerable } = descriptor
+
+    if (isNode) { return descriptor }
+
+    // https://github.com/jayphelps/core-decorators.js/blob/master/src/autobind.js
+    return Object.assign({}, {
+      configurable,
+      enumerable,
+      get () {
+        if (this === target) { return fn }
+        const _fnCached = _cache({ttl, target, name, instance: this, original: fn})
+
+        Object.defineProperty(this, name, {
+          configurable: true,
+          writable: true,
+          enumerable: false,
+          value: _fnCached
+        })
+        return _fnCached
+      },
+      set (newValue) {
+        Object.defineProperty(this, name, {
+          configurable: true,
+          writable: true,
+          enumerable: true,
+          value: newValue
+        })
+
+        return newValue
+      }
+    })
   }
 }
