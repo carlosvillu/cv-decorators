@@ -1,5 +1,8 @@
 import isNode from '../helpers/isNode'
 import md5 from '../helpers/md5'
+import stringOrIntToMs from '../helpers/stringOrIntToMs'
+
+const DEFAULT_TTL = 500
 
 const __CACHE__ = {}
 const _cache = ({ttl, target, name, instance, original} = {}) => {
@@ -28,7 +31,8 @@ const _cache = ({ttl, target, name, instance, original} = {}) => {
   }
 }
 
-export default ({ttl = 500} = {}) => {
+export default ({ttl = DEFAULT_TTL} = {}) => {
+  const timeToLife = stringOrIntToMs({ttl}) || DEFAULT_TTL
   return (target, name, descriptor) => {
     const { value: fn, configurable, enumerable } = descriptor
 
@@ -40,7 +44,7 @@ export default ({ttl = 500} = {}) => {
       enumerable,
       get () {
         if (this === target) { return fn }
-        const _fnCached = _cache({ttl, target, name, instance: this, original: fn})
+        const _fnCached = _cache({ttl: timeToLife, target, name, instance: this, original: fn})
 
         Object.defineProperty(this, name, {
           configurable: true,
