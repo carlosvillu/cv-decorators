@@ -19,7 +19,7 @@ const stringOrIntToMs = ({ttl}) => {
 
     case 'hour':
     case 'hours':
-      return unit * 1000 * 60
+      return unit * 1000 * 60 * 60
 
     default:
       return false
