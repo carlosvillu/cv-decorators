@@ -10,13 +10,13 @@ Creates a stream of calls to any method of a class. *Dependency of RxJS*
 ```javascript
 import {streamify} from 'cv-decorators';
 
-@streamify('greetting', 'greettingAsync')
+@streamify('greeting', 'greetingAsync')
 class Person {
-    greetting(name){
+    greeting(name){
         return `Hi ${name}`;
     }
 
-    greettingAsync(name){
+    greetingAsync(name){
         return new Promise( resolve => setTimeout(resolve, 100, `Hi ${name}`) );
     }
 }
@@ -24,19 +24,19 @@ class Person {
 const person = new Person();
 
 person.$.greeting.subscribe(({params, result}) => {
-    console.log(`Was called with ${params} and response "${result}"`); // => Was called with ['carlos'] and response "Hi carlos"
+    console.log(`method was called with ${params} and response was "${result}"`); // => method was called with ['Carlos'] and response was "Hi Carlos"
 });
 
-person.$.greettingAsync.subscribe(({params, result}) => {
-    console.log(`Was called with ${params} and response "${result}"`); // => Was called with ['carlos'] and response "Hi carlos"
+person.$.greetingAsync.subscribe(({params, result}) => {
+    console.log(`method was called with ${params} and response was "${result}"`); // => method was called with ['Carlos'] and response was "Hi Carlos"
 });
 
-person.greeting('carlos');
-person.greettingAsync('carlos');
+person.greeting('Carlos');
+person.greetingAsync('Carlos');
 ```
 ## Cache
 
-Create a cache of calls to any method of a class.
+Creates a cache of calls to any method of a class.
 
 ```javascript
 import {cache} from 'cv-decorators';
@@ -58,8 +58,7 @@ Dump cache to console if setting to truthy '__dumpCache__' key in localStorage:
 localStorage.__dumpCache__ = true
 ```
 
-By default the TTL for the keys in the cache is 500ms. But you can change it with:
-
+By default the TTL for the keys in the cache is 500ms, but it can be changed with
 
 ```javascript
 import {cache} from 'cv-decorators';
@@ -71,3 +70,6 @@ class Dummy {
 ```
 
 For this method the cache is 2 seconds
+
+It is possible to set TTL using a string with the format `ttl: 'XXX [second|seconds|minute|minutes|hour|hours]'`, 
+thus, avoiding writing very large integers
