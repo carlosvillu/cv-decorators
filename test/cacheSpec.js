@@ -130,6 +130,7 @@ describe('Cache', () => {
         clock.tick(600)
         expect(dummy.syncRndNumber(123)).to.be.not.eql(firstCall)
       })
+
       it('remain the cache before ttl ms', () => {
         class Dummy {
           @cache() // 500ms by default
@@ -140,6 +141,7 @@ describe('Cache', () => {
         clock.tick(400)
         expect(dummy.syncRndNumber(1234)).to.be.eql(firstCall)
       })
+
       it('remain the cache before not default ttl ms', () => {
         class Dummy {
           @cache({ttl: 700})
@@ -149,6 +151,40 @@ describe('Cache', () => {
         const firstCall = dummy.syncRndNumber(1234)
         clock.tick(600)
         expect(dummy.syncRndNumber(1234)).to.be.eql(firstCall)
+      })
+
+      describe('Should be able setting the TTL using a string', () => {
+        it('return the same value when you call faster', () => {
+          class Biz {
+            constructor () {
+              this.rnd = () => Math.random()
+            }
+
+            @cache({ttl: '2 minutes'})
+            syncRndNumber (num) { return this.rnd() }
+          }
+
+          const biz = new Biz()
+          const firstCall = biz.syncRndNumber(1234)
+          clock.tick(1000 * 60) // 1 minute
+          expect(biz.syncRndNumber(1234)).to.be.eql(firstCall)
+        })
+
+        it('use the default TTL for unkonw string', () => {
+          class Biz {
+            constructor () {
+              this.rnd = () => Math.random()
+            }
+
+            @cache({ttl: 'pepito'})
+            syncRndNumber (num) { return this.rnd() }
+          }
+
+          const biz = new Biz()
+          const firstCall = biz.syncRndNumber(12)
+          clock.tick(1000 * 60) // 1 minute
+          expect(biz.syncRndNumber(12)).to.be.not.eql(firstCall)
+        })
       })
     })
   })
