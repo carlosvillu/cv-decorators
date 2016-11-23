@@ -55,7 +55,7 @@
     "mocha": "2.5.3",
     "npm-run-all": "2.3.0",
     "sinon": "1.17.5",
-    "standard": "7.1.2",
+    "standard": "8.6.0",
     "updtr": "0.2.1",
     "validate-commit-msg": "2.6.1",
     "watchify": "3.7.0"
