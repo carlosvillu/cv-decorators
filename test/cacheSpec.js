@@ -1,4 +1,4 @@
-/*eslint-disable no-return-assign */
+/* eslint-disable no-return-assign */
 import sinon from 'sinon'
 import {expect} from 'chai'
 
