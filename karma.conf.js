@@ -8,13 +8,13 @@ var config = {
   files: [
     'node_modules/babel-polyfill/browser.js',
     'src/**/*.js',
-    'test/**/*Spec.js'
+    'test/browser/**/*Spec.js'
   ],
 
   reporters: ['spec'],
 
   preprocessors: {
-    'test/**/*.js': ['browserify'],
+    'test/browser/**/*.js': ['browserify'],
     'src/**/*.js': ['browserify']
   },
 

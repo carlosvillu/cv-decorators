@@ -1,8 +1,8 @@
-/*eslint-disable no-return-assign */
+/* eslint-disable no-return-assign */
 import sinon from 'sinon'
 import {expect} from 'chai'
 
-import cache from '../src/decorators/cache'
+import cache from '../../src/decorators/cache'
 
 describe('Cache', () => {
   it('Should exist', () => {
