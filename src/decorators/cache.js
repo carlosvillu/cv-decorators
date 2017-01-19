@@ -5,7 +5,7 @@ import stringOrIntToMs from '../helpers/stringOrIntToMs'
 const DEFAULT_TTL = 500
 
 const __CACHE__ = {}
-const _cache = ({ttl, target, name, instance, original} = {}) => {
+const _cache = ({ttl, target, name, instance, original, server} = {}) => {
   return (...args) => {
     const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
     const now = +new Date()
@@ -23,7 +23,7 @@ const _cache = ({ttl, target, name, instance, original} = {}) => {
     }
 
     // Dump cache to console if setting to truthy '__dumpCache__' key in localStorage
-    window.localStorage.__dumpCache__ && !!JSON.parse(window.localStorage.__dumpCache__) &&
+    !server && window.localStorage.__dumpCache__ && !!JSON.parse(window.localStorage.__dumpCache__) &&
     (console.clear() || console.log(__CACHE__))
 
     return __CACHE__[key] !== undefined ? __CACHE__[key].returns
@@ -31,12 +31,12 @@ const _cache = ({ttl, target, name, instance, original} = {}) => {
   }
 }
 
-export default ({ttl = DEFAULT_TTL} = {}) => {
+export default ({ttl = DEFAULT_TTL, server = false} = {}) => {
   const timeToLife = stringOrIntToMs({ttl}) || DEFAULT_TTL
   return (target, name, descriptor) => {
     const { value: fn, configurable, enumerable } = descriptor
 
-    if (isNode) { return descriptor }
+    if (isNode && !server) { return descriptor }
 
     // https://github.com/jayphelps/core-decorators.js/blob/master/src/autobind.js
     return Object.assign({}, {
@@ -44,7 +44,7 @@ export default ({ttl = DEFAULT_TTL} = {}) => {
       enumerable,
       get () {
         if (this === target) { return fn }
-        const _fnCached = _cache({ttl: timeToLife, target, name, instance: this, original: fn})
+        const _fnCached = _cache({ttl: timeToLife, target, name, instance: this, original: fn, server})
 
         Object.defineProperty(this, name, {
           configurable: true,

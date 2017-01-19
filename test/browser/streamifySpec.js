@@ -1,6 +1,6 @@
 import {expect} from 'chai'
 
-import {streamify} from '../src'
+import {streamify} from '../../src'
 
 class Dummy {
   constructor (name) {

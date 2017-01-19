@@ -10,7 +10,8 @@
     "lint": "standard",
     "test": "NODE_ENV=test karma start --single-run",
     "test:ci": "NODE_ENV=test ./node_modules/.bin/karma start --single-run --browsers Firefox",
-    "test:watch": "NODE_ENV=test karma start --log-level disable",
+    "test:browser:watch": "NODE_ENV=test karma start --log-level disable",
+    "test:server:watch": "NODE_ENV=test mocha ./test/server --compilers js:babel-core/register --watch",
     "up": "updtr --save-exact --test-stdout"
   },
   "repository": {
@@ -88,7 +89,8 @@
       "stage-3"
     ],
     "plugins": [
-      "transform-runtime"
+      "transform-runtime",
+      "transform-decorators-legacy"
     ]
   },
   "dependencies": {
