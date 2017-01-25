@@ -46,7 +46,7 @@
     "envify": "4.0.0",
     "ghooks": "2.0.0",
     "karma": "1.4.0",
-    "karma-browserify": "5.1.0",
+    "karma-browserify": "5.1.1",
     "karma-chrome-launcher": "2.0.0",
     "karma-clear-screen-reporter": "1.0.0",
     "karma-coverage": "1.1.1",
