@@ -1,41 +1,68 @@
-import Rx from 'rx-lite'
+const isPromise = (obj) => typeof obj !== 'undefined' &&
+  typeof obj.then === 'function'
 
-const createObserver = (proto, method, originalMethod) => {
-  return (observer) => {
-    proto[method] = function (...args) {
-      try {
-        const result = originalMethod.apply(this, args)
+const dispatchToListeners = ({onError, onNext, params, result}) => {
+  if (isPromise(result)) {
+    result
+      .then(value => onNext({ params, result: value }))
+      .catch(error => onError({ params, error }))
+  } else if (result) {
+    onNext({params, result})
+  }
+}
 
-        if (result && result.then && typeof result.then === 'function') { // is a Promise?
-          result
-            .then((value) => observer.onNext({params: args, result: value}))
-            .catch((error) => observer.onError({params: args, error}))
-        } else if (result) {
-          observer.onNext({params: args, result})
-        }
-        return result
-      } catch (error) {
-        observer.onError({params: args, error})
-        throw error
+const createSubscription = (proto, method, originalMethod) => {
+  let onNextListeners = []
+  let onErrorListeners = []
+
+  proto[method] = function (...args) {
+    const params = args
+    try {
+      const result = originalMethod.apply(this, args)
+      dispatchToListeners({onError, onNext, params, result})
+      return result
+    } catch (error) {
+      onError({params, error})
+      throw error
+    }
+  }
+
+  const onNext = ({params, result}) => {
+    onNextListeners.forEach(listener => listener({params, result}))
+  }
+
+  const onError = ({params, error}) => {
+    onErrorListeners.forEach(listener => listener({params, error}))
+  }
+
+  const subscribe = (onNext, onError) => {
+    onNextListeners.push(onNext)
+    onErrorListeners.push(onError)
+
+    return {
+      dispose: () => {
+        onNextListeners = onNextListeners.filter(l => l !== onNext)
+        onErrorListeners = onErrorListeners.filter(l => l !== onError)
       }
     }
   }
+
+  return { subscribe }
 }
 
 const reducer = (Target, proto, method) => {
   const originalMethod = Target.prototype[method]
   proto.$ = proto.$ || {}
-  proto.$[method] = Rx.Observable.create(createObserver(proto, method, originalMethod)).publish()
-  proto.$[method].connect()
+  proto.$[method] = createSubscription(proto, method, originalMethod)
   return proto
 }
 
 export default (...methods) => {
   return (Target) => {
-    Target.prototype = Object.assign(
+    Object.assign(
       Target.prototype,
       methods
-        .filter((method) => !!Target.prototype[method])
+        .filter(method => !!Target.prototype[method])
         .reduce(reducer.bind(null, Target), {})
     )
     return Target
