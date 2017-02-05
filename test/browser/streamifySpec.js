@@ -117,16 +117,51 @@ describe('Streamify', () => {
       dummyDecorate.dummyMethodPromise(10, 2)
     })
 
+    it('deal with more than one subscription to sync method', (done) => {
+      const onNext = sinon.spy()
+      const sub1 = dummyDecorate.$.dummyMethod.subscribe(onNext)
+      const sub2 = dummyDecorate.$.dummyMethod.subscribe(onNext)
+      const sub3 = dummyDecorate.$.dummyMethod.subscribe(onNext)
+
+      dummyDecorate.dummyMethod(10, 2)
+
+        // clean subscriptions
+      sub1.dispose()
+      sub2.dispose()
+      sub3.dispose()
+
+      expect(onNext.calledThrice).to.be.true
+      done()
+    })
+
+    it('deal with more than one subscription to async method', (done) => {
+      const onNext = sinon.spy()
+      const sub1 = dummyDecorate.$.dummyMethodPromise.subscribe(onNext)
+      const sub2 = dummyDecorate.$.dummyMethodPromise.subscribe(onNext)
+      const sub3 = dummyDecorate.$.dummyMethodPromise.subscribe(onNext)
+
+      dummyDecorate.dummyMethodPromise(10, 2).then(() => {
+        // clean subscriptions
+        sub1.dispose()
+        sub2.dispose()
+        sub3.dispose()
+
+        expect(onNext.calledThrice).to.be.true
+        done()
+      })
+    })
+
     describe('dispose', () => {
       it('unsubscribe to calls and results for Async method', (done) => {
         const onNext = sinon.spy()
         const subscription = dummyDecorate.$.dummyMethodPromise.subscribe(onNext)
+        // unsubscribe immediately to check onNext is not called
         subscription.dispose()
 
-        dummyDecorate.dummyMethodPromise(10, 2)
-
-        expect(onNext.called).to.be.false
-        done()
+        dummyDecorate.dummyMethodPromise(10, 2).then(() => {
+          expect(onNext.called).to.be.false
+          done()
+        })
       })
 
       it('unsubscribe to calls and results for sync method', (done) => {
