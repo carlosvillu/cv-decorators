@@ -92,8 +92,5 @@
       "transform-runtime",
       "transform-decorators-legacy"
     ]
-  },
-  "dependencies": {
-    "rx-lite": "4.0.8"
   }
 }
