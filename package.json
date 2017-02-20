@@ -45,7 +45,7 @@
     "cz-conventional-changelog": "1.2.0",
     "envify": "4.0.0",
     "ghooks": "2.0.0",
-    "karma": "1.4.0",
+    "karma": "1.5.0",
     "karma-browserify": "5.1.0",
     "karma-chrome-launcher": "2.0.0",
     "karma-clear-screen-reporter": "1.0.0",
