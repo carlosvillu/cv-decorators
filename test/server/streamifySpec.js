@@ -151,6 +151,20 @@ describe('Streamify', () => {
       })
     })
 
+    it('by default onError call console.error', (done) => {
+      const consoleSpy = sinon.spy(console, 'error')
+      const subscription = dummyDecorate.$.throwError.subscribe()
+
+      try {
+        dummyDecorate.throwError()
+      } catch (e) {
+        expect(consoleSpy.calledOnce).to.be.true
+        consoleSpy.restore()
+        subscription.dispose()
+        done()
+      }
+    })
+
     describe('dispose', () => {
       it('unsubscribe to calls and results for Async method', (done) => {
         const onNext = sinon.spy()

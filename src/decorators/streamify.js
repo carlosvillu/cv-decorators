@@ -1,6 +1,10 @@
 const isPromise = (obj) => typeof obj !== 'undefined' &&
   typeof obj.then === 'function'
 
+const defaultErrorHandler = (err) => {
+  console.error(err)
+}
+
 const dispatchToListeners = ({onError, onNext, params, result}) => {
   if (isPromise(result)) {
     result
@@ -35,7 +39,7 @@ const createSubscription = (proto, method, originalMethod) => {
     onErrorListeners.forEach(listener => listener({params, error}))
   }
 
-  const subscribe = (onNext, onError) => {
+  const subscribe = (onNext = () => {}, onError = defaultErrorHandler) => {
     onNextListeners.push(onNext)
     onErrorListeners.push(onError)
 
