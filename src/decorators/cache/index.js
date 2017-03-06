@@ -23,7 +23,7 @@ const _cache = ({ttl, target, name, instance, original, server, algorithm, host}
 
   return (...args) => {
     const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
-    const now = +new Date()
+    const now = Date.now()
     if (cache.get(key) === undefined) {
       tracker.send({action: ACTION_MISSING, env: ENV, algorithm})
       cache.set(key, {createdAt: now, returns: original.apply(instance, args)})
