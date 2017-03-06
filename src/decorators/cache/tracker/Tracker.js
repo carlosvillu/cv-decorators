@@ -4,15 +4,15 @@ export default class Tracker {
     this._host = host
   }
 
-  send({action, env, algorithm} = {}) {
-    if(!this._host){ return }
+  send ({action, env, algorithm} = {}) {
+    if (!this._host) { return }
 
     this.requestTo({
       url: `${this._protocol}://${this._host}/__tracking/cache/event/${env}::${action}::${algorithm}`
     })
   }
 
-  requestTo({url} = {}) {
+  requestTo ({url} = {}) {
     throw new Error('[Tracker#requestTo] must be implemented')
   }
 }

@@ -65,7 +65,7 @@ describe('Cache', () => {
       }
 
       const biz = new Biz()
-      const firstCall = biz.syncRndNumber(12)
+      biz.syncRndNumber(12)
       const [arg] = requestToStub.getCall(0).args
       expect(arg).to.be.eql({url: 'http://localhost/__tracking/cache/event/node::missing::lfu'})
     })
