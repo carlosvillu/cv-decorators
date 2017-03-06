@@ -1,6 +1,8 @@
+import sinon from 'sinon'
 import {expect} from 'chai'
 
 import cache from '../../src/decorators/cache'
+import NodeTracker from '../../src/decorators/cache/tracker/NodeTracker'
 
 describe('Cache', () => {
   it('should ignore the cache in Node by default', () => {
@@ -40,5 +42,32 @@ describe('Cache', () => {
         expect(firstCall).to.be.eql(secondCall)
         done()
       })
+  })
+
+  describe('Tracking hit and miss in the server', () => {
+    let requestToStub
+    beforeEach(() => {
+      requestToStub = sinon.stub(NodeTracker.prototype, 'requestTo')
+    })
+
+    afterEach(() => {
+      requestToStub.reset()
+    })
+
+    it('use the NodeTracker', () => {
+      class Biz {
+        constructor () {
+          this.rnd = () => Math.random()
+        }
+
+        @cache({server: true, trackTo: 'localhost', algorithm: 'lfu'})
+        syncRndNumber (num) { return this.rnd() }
+      }
+
+      const biz = new Biz()
+      const firstCall = biz.syncRndNumber(12)
+      const [arg] = requestToStub.getCall(0).args
+      expect(arg).to.be.eql({url: 'http://localhost/__tracking/cache/event/node::missing::lfu'})
+    })
   })
 })

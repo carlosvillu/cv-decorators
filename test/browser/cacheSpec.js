@@ -3,6 +3,7 @@ import sinon from 'sinon'
 import {expect} from 'chai'
 
 import cache from '../../src/decorators/cache'
+import BrowserTracker from '../../src/decorators/cache/tracker/BrowserTracker'
 
 describe('Cache', () => {
   it('Should exist', () => {
@@ -184,6 +185,32 @@ describe('Cache', () => {
           const firstCall = biz.syncRndNumber(12)
           clock.tick(1000 * 60) // 1 minute
           expect(biz.syncRndNumber(12)).to.be.not.eql(firstCall)
+        })
+      })
+      describe('Tracking hit and miss in the server', () => {
+        let requestToStub
+        beforeEach(() => {
+          requestToStub = sinon.stub(BrowserTracker.prototype, 'requestTo')
+        })
+
+        afterEach(() => {
+          requestToStub.reset()
+        })
+
+        it('use the BrowserTracker', () => {
+          class Biz {
+            constructor () {
+              this.rnd = () => Math.random()
+            }
+
+            @cache({trackTo: 'localhost'})
+            syncRndNumber (num) { return this.rnd() }
+          }
+
+          const biz = new Biz()
+          const firstCall = biz.syncRndNumber(12)
+          const [arg] = requestToStub.getCall(0).args
+          expect(arg).to.be.eql({url: 'http://localhost/__tracking/cache/event/browser::missing::lru'})
         })
       })
     })
