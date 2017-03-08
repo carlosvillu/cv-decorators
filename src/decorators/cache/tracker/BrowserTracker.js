@@ -21,5 +21,9 @@ export default class BrowserTracker extends Tracker {
 
     this._resetStatsAndTimer()
   }
+
+  _shouldSend () {
+    return (Math.floor(Math.random() * 100) + 1) === 1
+  }
 }
 

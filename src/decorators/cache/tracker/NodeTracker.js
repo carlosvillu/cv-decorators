@@ -27,4 +27,8 @@ export default class NodeTracker extends Tracker {
 
     this._resetStatsAndTimer()
   }
+
+  _shouldSend () {
+    return Date.now() - this._timer > this._period
+  }
 }

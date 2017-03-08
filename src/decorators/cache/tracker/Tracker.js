@@ -10,7 +10,10 @@ export default class Tracker {
       [action]: ++this._stats[action]
     }
 
-    if (Date.now() - this._timer > this._period) {
+    if (
+      this._shouldSend() &&
+      this._env === 'server'
+    ) {
       this._send(
         {
           hostname: `${this._protocol}://${this._host}`,
@@ -32,6 +35,10 @@ export default class Tracker {
 
   _send ({hostname, path} = {}) {
     throw new Error('[Tracker#_send] must be implemented')
+  }
+
+  _shouldSend () {
+    throw new Error('[Tracker#_shouldSend] must be implemented')
   }
 
 }

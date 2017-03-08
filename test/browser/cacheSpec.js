@@ -201,7 +201,7 @@ describe('Cache', () => {
         clock.restore()
       })
 
-      it('BrowserTracker DONT must track to the server pass 10 sencods from the last track', () => {
+      it('BrowserTracker DONT must track to the server', () => {
         class Biz {
           constructor () {
             this.rnd = () => Math.random()
@@ -216,28 +216,6 @@ describe('Cache', () => {
         clock.tick(1000 * 10) // 10 seconds
         biz.syncRndNumber(12)
         expect(_sendSpy.notCalled).to.be.ok
-      })
-
-      it('BrowserTracker must track to the server pass 20 sencods from the last track', () => {
-        class Biz {
-          constructor () {
-            this.rnd = () => Math.random()
-          }
-
-          @cache({trackTo: 'localhost'})
-          syncRndNumber (num) { return this.rnd() }
-        }
-
-        const biz = new Biz()
-        biz.syncRndNumber(12)
-        clock.tick(1000 * 21) // 21 seconds
-        biz.syncRndNumber(12)
-        const [arg] = _sendSpy.getCall(0).args
-        expect(arg).to.contain.all.keys({
-          hostname: 'http://localhost', path: '/__tracking/cache/event/stats'
-        })
-        expect(JSON.parse(arg.headers['x-payload']))
-          .to.contain.all.keys({hits: 1, misses: 1, env: 'browser', algorithm: 'lfu'})
       })
     })
   })
