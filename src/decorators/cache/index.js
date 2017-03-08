@@ -8,9 +8,6 @@ import LFU from './algorithms/LFU'
 import Tracker from './tracker'
 
 const DEFAULT_TTL = 500
-const ACTION_HIT = 'hit'
-const ACTION_MISSING = 'missing'
-const ENV = isNode ? 'node' : 'browser'
 
 const isPromise = (obj) => typeof obj !== 'undefined' &&
   typeof obj.then === 'function'
@@ -19,16 +16,16 @@ const _cache = ({ttl, target, name, instance, original, server, algorithm, host}
   const cache = algorithm === 'lru' ? new LRU()
                 : algorithm === 'lfu' ? new LFU()
                 : new Error(`[cv-decorators::cache] unknow algorithm: ${algorithm}`)
-  const tracker = new Tracker({host})
+  const tracker = new Tracker({host, algorithm})
 
   return (...args) => {
     const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
     const now = Date.now()
     if (cache.get(key) === undefined) {
-      tracker.send({action: ACTION_MISSING, env: ENV, algorithm})
+      tracker.track({action: Tracker.ACTION_MISSING})
       cache.set(key, {createdAt: now, returns: original.apply(instance, args)})
     } else {
-      tracker.send({action: ACTION_HIT, env: ENV, algorithm})
+      tracker.track({action: Tracker.ACTION_HIT})
     }
 
     if (isPromise(cache.get(key).returns)) {

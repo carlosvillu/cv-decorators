@@ -1,18 +1,37 @@
 export default class Tracker {
-  constructor ({host, protocol = 'http'} = {}) {
-    this._protocol = protocol
-    this._host = host
+  static get ACTION_HIT () { return 'hits' }
+  static get ACTION_MISSING () { return 'misses' }
+
+  track ({action} = {}) {
+    if (!this._host || !this._period) { return }
+
+    this._stats = {
+      ...this._stats,
+      [action]: ++this._stats[action]
+    }
+
+    if (Date.now() - this._timer > this._period) {
+      this._send(
+        {
+          hostname: `${this._protocol}://${this._host}`,
+          path: '/__tracking/cache/event/stats',
+          headers: {'x-payload': JSON.stringify({
+            env: this._env,
+            algorithm: this._algorithm,
+            ...this._stats
+          })}
+        }
+      )
+    }
   }
 
-  send ({action, env, algorithm} = {}) {
-    if (!this._host) { return }
-
-    this.requestTo({
-      url: `${this._protocol}://${this._host}/__tracking/cache/event/${env}::${action}::${algorithm}`
-    })
+  _resetStatsAndTimer () {
+    this._timer = Date.now()
+    this._stats = { hits: 0, misses: 0 }
   }
 
-  requestTo ({url} = {}) {
-    throw new Error('[Tracker#requestTo] must be implemented')
+  _send ({hostname, path} = {}) {
+    throw new Error('[Tracker#_send] must be implemented')
   }
+
 }

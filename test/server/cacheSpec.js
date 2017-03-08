@@ -45,29 +45,54 @@ describe('Cache', () => {
   })
 
   describe('Tracking hit and miss in the server', () => {
-    let requestToStub
-    beforeEach(() => {
-      requestToStub = sinon.stub(NodeTracker.prototype, 'requestTo')
+    let _sendSpy, clock
+    before(() => {
+      _sendSpy = sinon.spy(NodeTracker.prototype, '_send')
+      clock = sinon.useFakeTimers()
     })
 
-    afterEach(() => {
-      requestToStub.reset()
+    after(() => {
+      _sendSpy.reset()
+      clock.restore()
     })
 
-    it('use the NodeTracker', () => {
+    it('NodeTracker DONT must track to the server pass 10 sencods from the last track', () => {
       class Biz {
         constructor () {
           this.rnd = () => Math.random()
         }
 
-        @cache({server: true, trackTo: 'localhost', algorithm: 'lfu'})
+        @cache({server: true, trackTo: 'localhost'})
         syncRndNumber (num) { return this.rnd() }
       }
 
       const biz = new Biz()
       biz.syncRndNumber(12)
-      const [arg] = requestToStub.getCall(0).args
-      expect(arg).to.be.eql({url: 'http://localhost/__tracking/cache/event/node::missing::lfu'})
+      clock.tick(1000 * 10) // 10 seconds
+      biz.syncRndNumber(12)
+      expect(_sendSpy.notCalled).to.be.ok
+    })
+
+    it('NodeTracker must track to the server pass 20 sencods from the last track', () => {
+      class Biz {
+        constructor () {
+          this.rnd = () => Math.random()
+        }
+
+        @cache({server: true, trackTo: 'localhost'})
+        syncRndNumber (num) { return this.rnd() }
+      }
+
+      const biz = new Biz()
+      biz.syncRndNumber(12)
+      clock.tick(1000 * 21) // 21 seconds
+      biz.syncRndNumber(12)
+      const [arg] = _sendSpy.getCall(0).args
+      expect(arg).to.contain.all.keys({
+        hostname: 'http://localhost', path: '/__tracking/cache/event/stats'
+      })
+      expect(JSON.parse(arg.headers['x-payload']))
+        .to.contain.all.keys({hits: 1, misses: 1, env: 'browser', algorithm: 'lfu'})
     })
   })
 })

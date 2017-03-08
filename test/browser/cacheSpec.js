@@ -187,31 +187,57 @@ describe('Cache', () => {
           expect(biz.syncRndNumber(12)).to.be.not.eql(firstCall)
         })
       })
-      describe('Tracking hit and miss in the server', () => {
-        let requestToStub
-        beforeEach(() => {
-          requestToStub = sinon.stub(BrowserTracker.prototype, 'requestTo')
-        })
+    })
 
-        afterEach(() => {
-          requestToStub.reset()
-        })
+    describe('Tracking hit and miss in the server', () => {
+      let _sendSpy, clock
+      before(() => {
+        _sendSpy = sinon.spy(BrowserTracker.prototype, '_send')
+        clock = sinon.useFakeTimers()
+      })
 
-        it('use the BrowserTracker', () => {
-          class Biz {
-            constructor () {
-              this.rnd = () => Math.random()
-            }
+      after(() => {
+        _sendSpy.reset()
+        clock.restore()
+      })
 
-            @cache({trackTo: 'localhost'})
-            syncRndNumber (num) { return this.rnd() }
+      it('BrowserTracker DONT must track to the server pass 10 sencods from the last track', () => {
+        class Biz {
+          constructor () {
+            this.rnd = () => Math.random()
           }
 
-          const biz = new Biz()
-          biz.syncRndNumber(12)
-          const [arg] = requestToStub.getCall(0).args
-          expect(arg).to.be.eql({url: 'http://localhost/__tracking/cache/event/browser::missing::lru'})
+          @cache({trackTo: 'localhost'})
+          syncRndNumber (num) { return this.rnd() }
+        }
+
+        const biz = new Biz()
+        biz.syncRndNumber(12)
+        clock.tick(1000 * 10) // 10 seconds
+        biz.syncRndNumber(12)
+        expect(_sendSpy.notCalled).to.be.ok
+      })
+
+      it('BrowserTracker must track to the server pass 20 sencods from the last track', () => {
+        class Biz {
+          constructor () {
+            this.rnd = () => Math.random()
+          }
+
+          @cache({trackTo: 'localhost'})
+          syncRndNumber (num) { return this.rnd() }
+        }
+
+        const biz = new Biz()
+        biz.syncRndNumber(12)
+        clock.tick(1000 * 21) // 21 seconds
+        biz.syncRndNumber(12)
+        const [arg] = _sendSpy.getCall(0).args
+        expect(arg).to.contain.all.keys({
+          hostname: 'http://localhost', path: '/__tracking/cache/event/stats'
         })
+        expect(JSON.parse(arg.headers['x-payload']))
+          .to.contain.all.keys({hits: 1, misses: 1, env: 'browser', algorithm: 'lfu'})
       })
     })
   })

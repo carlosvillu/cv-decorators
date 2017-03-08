@@ -82,6 +82,8 @@
       "xit",
       "describe",
       "beforeEach",
+      "before",
+      "after",
       "afterEach"
     ],
     "ignore": [
