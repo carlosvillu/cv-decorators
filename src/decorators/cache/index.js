@@ -12,9 +12,9 @@ const DEFAULT_TTL = 500
 const isPromise = (obj) => typeof obj !== 'undefined' &&
   typeof obj.then === 'function'
 
-const _cache = ({ttl, target, name, instance, original, server, algorithm, host} = {}) => {
-  const cache = algorithm === 'lru' ? new LRU()
-                : algorithm === 'lfu' ? new LFU()
+const _cache = ({ttl, target, name, instance, original, server, algorithm, host, size} = {}) => {
+  const cache = algorithm === 'lru' ? new LRU({size})
+                : algorithm === 'lfu' ? new LFU({size})
                 : new Error(`[cv-decorators::cache] unknow algorithm: ${algorithm}`)
   const tracker = new Tracker({host, algorithm})
 
@@ -41,7 +41,7 @@ const _cache = ({ttl, target, name, instance, original, server, algorithm, host}
   }
 }
 
-export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: host} = {}) => {
+export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: host, size} = {}) => {
   const timeToLife = stringOrIntToMs({ttl}) || DEFAULT_TTL
   return (target, name, descriptor) => {
     const { value: fn, configurable, enumerable } = descriptor
@@ -55,7 +55,7 @@ export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: 
       get () {
         if (this === target) { return fn }
         const _fnCached = _cache({
-          ttl: timeToLife, target, name, instance: this, original: fn, server, algorithm, host
+          ttl: timeToLife, target, name, instance: this, original: fn, server, algorithm, host, size
         })
 
         Object.defineProperty(this, name, {

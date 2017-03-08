@@ -2,9 +2,9 @@ import Cache from './Cache'
 import LRUCache from 'lru-cache'
 
 export default class LRU extends Cache {
-  constructor () {
+  constructor ({size = 100} = {}) {
     super()
-    this._lru = new LRUCache(100)
+    this._lru = new LRUCache(size)
   }
 
   get (key) { return this._lru.get(key) }
