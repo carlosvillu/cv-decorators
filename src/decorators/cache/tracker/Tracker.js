@@ -1,6 +1,8 @@
 export default class Tracker {
   static get ACTION_HIT () { return 'hits' }
   static get ACTION_MISSING () { return 'misses' }
+  static get ENV_SERVER () { return 'server' }
+  static get ENV_BROWSER () { return 'browser' }
 
   track ({action} = {}) {
     if (!this._host || !this._period) { return }
@@ -12,7 +14,7 @@ export default class Tracker {
 
     if (
       this._shouldSend() &&
-      this._env === 'server'
+      this._env === Tracker.ENV_SERVER
     ) {
       this._send(
         {

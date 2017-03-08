@@ -1,7 +1,7 @@
 import Tracker from './Tracker'
 
 export default class BrowserTracker extends Tracker {
-  constructor ({host, algorithm, protocol = 'http', period = 1000 * 20 /* 20 seconds */, env = 'browser'} = {}) {
+  constructor ({host, algorithm, protocol = 'http', period = 1000 * 20 /* 20 seconds */, env = Tracker.ENV_BROWSER} = {}) {
     super({host, algorithm, protocol, period, env})
 
     this._host = host

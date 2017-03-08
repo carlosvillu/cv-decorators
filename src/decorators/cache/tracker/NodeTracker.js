@@ -3,7 +3,7 @@ import http from 'http'
 import https from 'https'
 
 export default class NodeTracker extends Tracker {
-  constructor ({host, algorithm, protocol = 'http', period = 1000 * 20 /* 20 seconds */, env = 'server'} = {}) {
+  constructor ({host, algorithm, protocol = 'http', period = 1000 * 20 /* 20 seconds */, env = Tracker.ENV_SERVER} = {}) {
     super({host, algorithm, protocol, period, env})
 
     this._host = host
