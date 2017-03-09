@@ -89,7 +89,7 @@ describe('Cache', () => {
       biz.syncRndNumber(12)
       const [arg] = _sendSpy.getCall(0).args
       expect(arg).to.contain.all.keys({
-        hostname: 'http://localhost', path: '/__tracking/cache/event/stats'
+        path: '/__tracking/cache/event/stats'
       })
       expect(JSON.parse(arg.headers['x-payload']))
         .to.contain.all.keys({hits: 1, misses: 1, env: 'browser', algorithm: 'lfu'})
