@@ -189,7 +189,7 @@ describe('Cache', () => {
       })
     })
 
-    describe('Tracking hit and miss in the server', () => {
+    describe('Tracking hit and miss in the browser', () => {
       let _sendSpy, clock
       before(() => {
         _sendSpy = sinon.spy(BrowserTracker.prototype, '_send')
@@ -201,7 +201,7 @@ describe('Cache', () => {
         clock.restore()
       })
 
-      it('BrowserTracker DONT must track to the server', () => {
+      it('BrowserTracker must NOT track to the browser', () => {
         class Biz {
           constructor () {
             this.rnd = () => Math.random()
@@ -213,7 +213,7 @@ describe('Cache', () => {
 
         const biz = new Biz()
         biz.syncRndNumber(12)
-        clock.tick(1000 * 10) // 10 seconds
+        clock.tick(1000 * 21) // 21 seconds
         biz.syncRndNumber(12)
         expect(_sendSpy.notCalled).to.be.ok
       })

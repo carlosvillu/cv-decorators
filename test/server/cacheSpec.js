@@ -56,7 +56,7 @@ describe('Cache', () => {
       clock.restore()
     })
 
-    it('NodeTracker DONT must track to the server pass 10 sencods from the last track', () => {
+    it('NodeTracker must NOT track to the server pass 10 seconds from the last track', () => {
       class Biz {
         constructor () {
           this.rnd = () => Math.random()
@@ -73,7 +73,7 @@ describe('Cache', () => {
       expect(_sendSpy.notCalled).to.be.ok
     })
 
-    it('NodeTracker must track to the server pass 20 sencods from the last track', () => {
+    it('NodeTracker must track to the server pass 20 seconds from the last track', () => {
       class Biz {
         constructor () {
           this.rnd = () => Math.random()
