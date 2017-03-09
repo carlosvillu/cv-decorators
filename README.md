@@ -72,3 +72,15 @@ For this method the cache is 2 seconds
 It is possible to set TTL using a string with the format `ttl: 'XXX [second|seconds|minute|minutes|hour|hours]'`, 
 thus, avoiding writing very large integers
 [Example](https://github.com/carlosvillu/cv-decorators/blob/feature/string-for-time/test/cacheSpec.js#L163)
+
+### Options:
+
+* ttl (500ms): Time to life for each cache register
+
+* server (false): If the cache will be used in a NodeJS env. Be careful that could break your server
+
+* algorithm ('lru'): Which algorithm will be used to discard register in the cache when will be full. Can be lru | lfu
+
+* trackTo: Is you pass a host, each 20secds will be send a ping to `${trackTo}/__tracking/cache/event/stats` with a header `x-payload` where there is a object with the stats of hit, miss, env and algorithm
+
+* size (100): How many register can be in the cache before start to remove register. 
