@@ -18,7 +18,6 @@ export default class Tracker {
     ) {
       this._send(
         {
-          hostname: `${this._protocol}://${this._host}`,
           path: '/__tracking/cache/event/stats',
           headers: {'x-payload': JSON.stringify({
             env: this._env,
