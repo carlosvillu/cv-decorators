@@ -17,12 +17,13 @@ export default class NodeTracker extends Tracker {
 
   _send ({path, headers, port = 80, method = 'GET'} = {}) {
     const client = this._protocol === 'http' ? http : https
-    client.get({
-      hostname: this._host,
+    const req = client.get({
+      hostname: this._host.replace(/https?:\/\//g, ''),
       port,
       path,
       headers
     })
+    req.end()
 
     this._resetStatsAndTimer()
   }
