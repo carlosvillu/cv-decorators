@@ -8,7 +8,7 @@ export default class Tracker {
     host,
     algorithm,
     protocol = 'http',
-    segmentation = 20,
+    segmentation,
     env = Tracker.ENV_SERVER
   } = {}) {
     this._host = host
@@ -21,7 +21,7 @@ export default class Tracker {
   }
 
   track ({action} = {}) {
-    if (!this._host || !this._period) { return }
+    if (!this._host || !this._segmentation) { return }
 
     this._stats = {
       ...this._stats,
