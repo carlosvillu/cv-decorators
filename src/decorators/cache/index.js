@@ -12,11 +12,11 @@ const DEFAULT_TTL = 500
 const isPromise = (obj) => typeof obj !== 'undefined' &&
   typeof obj.then === 'function'
 
-const _cache = ({ttl, target, name, instance, original, server, algorithm, host, size} = {}) => {
+const _cache = ({ttl, target, name, instance, original, server, algorithm, host, segmentation, size} = {}) => {
   const cache = algorithm === 'lru' ? new LRU({size})
                 : algorithm === 'lfu' ? new LFU({size})
                 : new Error(`[cv-decorators::cache] unknow algorithm: ${algorithm}`)
-  const tracker = new Tracker({host, algorithm})
+  const tracker = new Tracker({host, algorithm, segmentation})
 
   return (...args) => {
     const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
@@ -41,7 +41,7 @@ const _cache = ({ttl, target, name, instance, original, server, algorithm, host,
   }
 }
 
-export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: host, size} = {}) => {
+export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: host, size, segmentation} = {}) => {
   const timeToLife = stringOrIntToMs({ttl}) || DEFAULT_TTL
   return (target, name, descriptor) => {
     const { value: fn, configurable, enumerable } = descriptor
