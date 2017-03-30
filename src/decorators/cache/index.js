@@ -12,21 +12,28 @@ const DEFAULT_TTL = 500
 const isPromise = (obj) => typeof obj !== 'undefined' &&
   typeof obj.then === 'function'
 
-const _cache = ({ttl, target, name, instance, original, server, algorithm, host, segmentation, size} = {}) => {
-  const cache = algorithm === 'lru' ? new LRU({size})
+let caches = {}
+
+const _cache = ({ttl, target, fnName, instance, original, server, algorithm, host, segmentation, size} = {}) => {
+  caches[fnName] = caches[fnName] ||
+                (algorithm === 'lru' ? new LRU({size})
                 : algorithm === 'lfu' ? new LFU({size})
-                : new Error(`[cv-decorators::cache] unknow algorithm: ${algorithm}`)
-  const tracker = new Tracker({host, algorithm, segmentation})
+                : new Error(`[cv-decorators::cache] unknow algorithm: ${algorithm}`))
+
+  const cache = caches[fnName]
+  const tracker = new Tracker({algorithm, host, fnName, segmentation})
 
   return (...args) => {
-    const key = `${target.constructor.name}::${name}::${md5.hash(JSON.stringify(args))}`
+    const key = `${target.constructor.name}::${fnName}::${md5.hash(JSON.stringify(args))}`
     const now = Date.now()
     if (cache.get(key) === undefined) {
-      tracker.track({action: Tracker.ACTION_MISSING})
+      tracker._updateStats({action: Tracker.ACTION_MISSING})
       cache.set(key, {createdAt: now, returns: original.apply(instance, args)})
     } else {
-      tracker.track({action: Tracker.ACTION_HIT})
+      tracker._updateStats({action: Tracker.ACTION_HIT})
     }
+
+    tracker.track()
 
     if (isPromise(cache.get(key).returns)) {
       cache.get(key).returns.catch(() => cache.del(key))
@@ -43,7 +50,7 @@ const _cache = ({ttl, target, name, instance, original, server, algorithm, host,
 
 export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: host, segmentation, size} = {}) => {
   const timeToLife = stringOrIntToMs({ttl}) || DEFAULT_TTL
-  return (target, name, descriptor) => {
+  return (target, fnName, descriptor) => {
     const { value: fn, configurable, enumerable } = descriptor
 
     if (isNode && !server) { return descriptor }
@@ -55,10 +62,10 @@ export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: 
       get () {
         if (this === target) { return fn }
         const _fnCached = _cache({
-          ttl: timeToLife, target, name, instance: this, original: fn, server, algorithm, host, segmentation, size
+          ttl: timeToLife, target, fnName, instance: this, original: fn, server, algorithm, host, segmentation, size
         })
 
-        Object.defineProperty(this, name, {
+        Object.defineProperty(this, fnName, {
           configurable: true,
           writable: true,
           enumerable: false,
@@ -67,7 +74,7 @@ export default ({ttl = DEFAULT_TTL, server = false, algorithm = 'lru', trackTo: 
         return _fnCached
       },
       set (newValue) {
-        Object.defineProperty(this, name, {
+        Object.defineProperty(this, fnName, {
           configurable: true,
           writable: true,
           enumerable: true,
