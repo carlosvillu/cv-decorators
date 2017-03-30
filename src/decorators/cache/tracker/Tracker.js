@@ -5,17 +5,19 @@ export default class Tracker {
   static get ENV_BROWSER () { return 'browser' }
 
   constructor ({
-    host,
     algorithm,
+    fnName,
+    host,
     protocol = 'http',
     segmentation,
-    env = Tracker.ENV_SERVER
+    env
   } = {}) {
-    this._host = host
     this._algorithm = algorithm
+    this._env = env
+    this._fnName = fnName
+    this._host = host
     this._protocol = protocol
     this._segmentation = segmentation
-    this._env = env
 
     this._resetStats()
   }
@@ -23,31 +25,36 @@ export default class Tracker {
   track ({action} = {}) {
     if (!this._host || !this._segmentation) { return }
 
+    if (this._shouldSend()) {
+      this._send({
+        path: '/__tracking/cache/event/stats',
+        headers: {'x-payload': JSON.stringify({
+          algorithm: this._algorithm,
+          env: this._env,
+          fnName: this._fnName,
+          ...this._stats
+        })},
+        hostname: this._host.replace(/https?:\/\//g, '')
+      })
+      this._resetStats()
+    }
+  }
+
+  _updateStats ({action} = {}) {
     this._stats = {
       ...this._stats,
       [action]: ++this._stats[action]
     }
-
-    if (
-      this._shouldSend() &&
-      this._env === Tracker.ENV_SERVER
-    ) {
-      this._send({
-        path: '/__tracking/cache/event/stats',
-        headers: {'x-payload': JSON.stringify({
-          env: this._env,
-          algorithm: this._algorithm,
-          ...this._stats
-        })}
-      })
-    }
   }
 
   _resetStats () {
-    this._stats = { hits: 0, misses: 0 }
+    this._stats = {
+      [Tracker.ACTION_HIT]: 0,
+      [Tracker.ACTION_MISSING]: 0
+    }
   }
 
-  _send ({hostname, path} = {}) {
+  _send ({path, headers, hostname} = {}) {
     throw new Error('[Tracker#_send] must be implemented')
   }
 
