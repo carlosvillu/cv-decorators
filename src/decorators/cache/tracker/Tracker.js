@@ -8,6 +8,7 @@ export default class Tracker {
     algorithm,
     fnName,
     host,
+    port = 80,
     protocol = 'http',
     segmentation,
     env
@@ -16,6 +17,7 @@ export default class Tracker {
     this._env = env
     this._fnName = fnName
     this._host = host
+    this._port = port
     this._protocol = protocol
     this._segmentation = segmentation
 
@@ -27,14 +29,15 @@ export default class Tracker {
 
     if (this._shouldSend()) {
       this._send({
-        path: '/__tracking/cache/event/stats',
         headers: {'x-payload': JSON.stringify({
           algorithm: this._algorithm,
           env: this._env,
           fnName: this._fnName,
           ...this._stats
         })},
-        hostname: this._host.replace(/https?:\/\//g, '')
+        hostname: this._host.replace(/https?:\/\//g, ''),
+        path: '/__tracking/cache/event/stats',
+        port: this._port
       })
       this._resetStats()
     }
