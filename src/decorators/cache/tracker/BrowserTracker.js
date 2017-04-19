@@ -16,7 +16,7 @@ export default class BrowserTracker extends Tracker {
   _send ({headers, hostname, path, port} = {}) {
     const request = new window.XMLHttpRequest()
 
-    request.open('GET', `${this._protocol}:${hostname}:${port}${path}`)
+    request.open('GET', `${this._protocol}://${hostname}:${port}${path}`)
     request.setRequestHeader('x-payload', headers['x-payload'])
     request.send()
   }

@@ -35,7 +35,7 @@ export default class Tracker {
           fnName: this._fnName,
           ...this._stats
         })},
-        hostname: this._host.replace(/https?:\/\//g, ''),
+        hostname: this._host.replace(/(https?)?:?\/\//g, ''),
         path: '/__tracking/cache/event/stats',
         port: this._port
       })
