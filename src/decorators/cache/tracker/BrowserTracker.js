@@ -5,17 +5,18 @@ export default class BrowserTracker extends Tracker {
     algorithm,
     fnName,
     host,
+    port,
     protocol,
     segmentation,
     env = Tracker.ENV_BROWSER
   } = {}) {
-    super({algorithm, fnName, host, protocol, segmentation, env})
+    super({algorithm, fnName, host, port, protocol, segmentation, env})
   }
 
-  _send ({path, headers, hostname} = {}) {
+  _send ({headers, hostname, path, port} = {}) {
     const request = new window.XMLHttpRequest()
 
-    request.open('GET', `${this._protocol}://${hostname}${path}`)
+    request.open('GET', `${this._protocol}://${hostname}:${port}${path}`)
     request.setRequestHeader('x-payload', headers['x-payload'])
     request.send()
   }

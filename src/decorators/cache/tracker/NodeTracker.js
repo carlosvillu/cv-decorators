@@ -7,17 +7,19 @@ export default class NodeTracker extends Tracker {
     algorithm,
     fnName,
     host,
+    port,
     protocol,
     segmentation,
     env = Tracker.ENV_SERVER
   } = {}) {
-    super({algorithm, fnName, host, protocol, segmentation, env})
+    super({algorithm, fnName, host, port, protocol, segmentation, env})
   }
 
-  _send ({path, headers, hostname} = {}) {
+  _send ({headers, hostname, path, port} = {}) {
     const client = this._protocol === 'http' ? http : https
     const request = client.get({
       hostname,
+      port,
       path,
       headers
     })
