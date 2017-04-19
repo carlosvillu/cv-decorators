@@ -34,7 +34,7 @@ export default class Tracker {
           fnName: this._fnName,
           ...this._stats
         })},
-        hostname: this._host.replace(/https?:\/\//g, '')
+        hostname: this._host.replace(/(https?)?:?\/\//g, '')
       })
       this._resetStats()
     }
