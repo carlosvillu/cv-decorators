@@ -63,7 +63,7 @@
     "sinon": "1.17.7",
     "standard": "8.6.0",
     "updtr": "0.2.3",
-    "validate-commit-msg": "2.8.2",
+    "validate-commit-msg": "2.9.0",
     "watchify": "3.8.0"
   },
   "config": {
